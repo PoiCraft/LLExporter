@@ -27,9 +27,12 @@ public:
 
     void set(string metricsName, double metricsValue, Label metricsLabels[]);
 
-    string get();
+    void set(string metricsName, double metricsValue);
+
+    [[nodiscard]]string get();
 };
 
 string buildMetrics(Metrics metrics[]);
+
 
 #endif //PLUGIN_METRICS_H

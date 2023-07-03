@@ -22,6 +22,11 @@ void Metrics::set(string metricsName, double metricsValue, Label metricsLabels[]
     }
 }
 
+void Metrics::set(string metricsName, double metricsValue) {
+    this->name = std::move(metricsName);
+    this->value = metricsValue;
+}
+
 string Metrics::get() {
     string result = "bds_" + this->name;
     if (!this->labels[0].name.empty()) {

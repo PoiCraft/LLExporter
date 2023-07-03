@@ -7,6 +7,9 @@
 
 #include "version.h"
 
+#include <thread>
+#include "server.h"
+
 // We recommend using the global logger.
 extern Logger logger;
 
@@ -17,5 +20,8 @@ extern Logger logger;
 void PluginInit()
 {
     // Your code here
-    logger.info("Hello, world!");
+    logger.info("Starting Metrics Server...");
+    std::thread serverThread(startServer);
+    serverThread.detach();
+    logger.info("Metrics Server started!");
 }
