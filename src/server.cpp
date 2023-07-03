@@ -12,11 +12,18 @@ int startServer() {
     httplib::Server svr;
 
     svr.Get("/metrics", [](const httplib::Request &req, httplib::Response &res) {
-        Metrics metrics[1];
 
-        metrics[0].set("test", 1);
+        logger.info("Metrics requested!");
+        MetricsManager mm;
 
-        res.set_content(buildMetrics(metrics), "text/plain");
+        //for test
+        Metrics test;
+        test.set("test", 1.0);
+        test.addLabel("test", "test");
+        mm.addMetrics(test);
+
+        res.set_content(mm.buildMetrics(), "text/plain");
+        logger.info("Metrics sent!");
     });
 
     svr.listen("0.0.0.0", 10010);

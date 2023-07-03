@@ -6,6 +6,7 @@
 #define PLUGIN_METRICS_H
 
 #include "string"
+#include "vector"
 
 using namespace std;
 
@@ -23,16 +24,27 @@ class Metrics {
 public:
     string name;
     double value;
-    Label labels[16];
+    vector<Label> labels;
 
     void set(string metricsName, double metricsValue, Label metricsLabels[]);
 
     void set(string metricsName, double metricsValue);
 
+    void addLabel(const Label& newLabel);
+
+    void addLabel(string labelName,string labelValue);
+
     [[nodiscard]]string get();
 };
 
-string buildMetrics(Metrics metrics[]);
+class MetricsManager {
+private:
+    vector <Metrics> metrics;
+public:
+    void addMetrics(const Metrics& newMetrics);
+
+    [[nodiscard]] string buildMetrics();
+};
 
 
 #endif //PLUGIN_METRICS_H

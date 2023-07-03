@@ -10,7 +10,7 @@ void Label::set(string labelName, string labelValue) {
 }
 
 string Label::get() const {
-    return this->name + "=" + this->value;
+    return this->name + "=\"" + this->value + "\"";
 }
 
 
@@ -27,16 +27,24 @@ void Metrics::set(string metricsName, double metricsValue) {
     this->value = metricsValue;
 }
 
+void Metrics::addLabel(const Label& newLabel) {
+    this->labels.push_back(newLabel);
+}
+
+void Metrics::addLabel(string labelName, string labelValue) {
+    Label newLabel;
+    newLabel.set(std::move(labelName), std::move(labelValue));
+    this->addLabel(newLabel);
+}
+
 string Metrics::get() {
     string result = "bds_" + this->name;
-    if (!this->labels[0].name.empty()) {
+    if(!this->labels.empty()){
         result += "{";
-        for (int i = 0; i < 16; ++i) {
-            if (!this->labels[i].name.empty()) {
-                result += this->labels[i].get();
-                if (!this->labels[i + 1].name.empty()) {
-                    result += ",";
-                }
+        for (const auto& i : this->labels) {
+            result += i.get();
+            if (i.name != this->labels.back().name) {
+                result += ",";
             }
         }
         result += "}";
@@ -45,12 +53,14 @@ string Metrics::get() {
     return result;
 }
 
-string buildMetrics(Metrics metrics[]) {
+void MetricsManager::addMetrics(const Metrics& newMetrics) {
+    this->metrics.push_back(newMetrics);
+}
+
+string MetricsManager::buildMetrics() {
     string result;
-    for (int i = 0; i < 16; ++i) {
-        if (!metrics[i].name.empty()) {
-            result += metrics[i].get() + "\n";
-        }
+    for (auto & metric : this->metrics) {
+        result += metric.get() + "\n";
     }
     return result;
 }
