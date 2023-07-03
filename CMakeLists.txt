@@ -62,7 +62,7 @@ add_link_options(
     /SUBSYSTEM:CONSOLE
 )
 
-add_library(${CMAKE_PROJECT_NAME} SHARED ${SRC_FILES_DIR})
+add_library(${CMAKE_PROJECT_NAME} SHARED ${SRC_FILES_DIR} src/metrics/Metrics.cpp src/metrics/Metrics.h src/metrics/Metrics.h src/metrics/Metrics.h)
 
 target_link_libraries(${CMAKE_PROJECT_NAME} 
 	"${CMAKE_SOURCE_DIR}/SDK/lib/LiteLoader.lib"
