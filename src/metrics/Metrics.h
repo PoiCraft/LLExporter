@@ -7,80 +7,46 @@
 
 #include <string>
 #include <vector>
+#include "Label.h"
 
 using namespace std;
 
-class Label {
+class IntMetrics {
 public:
     string name;
-    string value;
-
-    void set(string labelName, string labelValue);
-
-    [[nodiscard]] string get() const;
-};
-
-template<class V>
-class Metrics {
-public:
-    string name;
-    V value;
+    int value;
     vector<Label> labels;
-    template<typename T>
-    Metrics(const string &name, T value) {
-        this->name = name;
-        this->value = std::move(value);
-    }
 
-    template<typename T>
-    void set(const string& metricsName, T metricsValue) {
-        this->name = metricsName;
-        this->value = std::move(metricsValue);
-    }
+    IntMetrics(const string &name, int value);
 
-    template<typename T>
-    void update(T metricsValue) {
-        this->value = std::move(metricsValue);
-    }
+    void set(const string &metricsName, int metricsValue);
 
-    void addLabel(string labelName, string labelValue){
-        Label newLabel;
-        newLabel.set(std::move(labelName), std::move(labelValue));
-        this->labels.push_back(newLabel);
-    }
-    string get() {
-        string result = "bds_" + this->name;
-        if (!this->labels.empty()) {
-            result += "{";
-            for (const auto &i: this->labels) {
-                result += i.get();
-                if (i.name != this->labels.back().name) {
-                    result += ",";
-                }
-            }
-            result += "}";
-        }
-        result += " " + std::to_string(this->value);
-        return result;
-    }
+    void update(int metricsValue);
+
+    IntMetrics *label(string labelName, string labelValue);
+
+    void addLabel(string labelName, string labelValue);
+
+    string get();
 };
-template<class U>
-class MetricsManager {
+
+class DoubleMetrics {
 public:
-    vector<Metrics<U>> metricsValue;
-    template<typename T>
-    void addMetrics(const Metrics<T> &newMetrics) {
-        this->metricsValue.push_back(newMetrics);
-    }
-    string buildMetrics() {
-        string result;
-        for (auto &metric: this->metricsValue) {
-            result += metric.get() + "\n";
-        }
-        return result;
-    }
+    string name;
+    double value;
+    vector<Label> labels;
+
+    DoubleMetrics(const string &name, double value);
+
+    void set(const string &metricsName, double metricsValue);
+
+    void update(double metricsValue);
+
+    DoubleMetrics *label(string labelName, string labelValue);
+
+    void addLabel(string labelName, string labelValue);
+
+    string get();
 };
-
-
 
 #endif //PLUGIN_METRICS_H

@@ -1,11 +1,9 @@
 #include "server.h"
-#include "metrics/Metrics.h"
 #include <llapi/LoggerAPI.h>
-extern MetricsManager<int> mmi;
-extern MetricsManager<double> mmd;
+#include "metrics/MetricsManager.h"
+
 extern Logger logger;
-extern Metrics<double> testDouble;
-extern Metrics<int> testInt;
+
 int startServer() {
     httplib::Server svr;
 
@@ -13,20 +11,22 @@ int startServer() {
 
         logger.info("Metrics requested!");
 
+        MetricsManager mm;
 
-        //for test int
+        // test for int
+        IntMetrics *testInt = mm.newMetrics("testInt", 1);
+        testInt->addLabel("testLabel", "testValue_int");
 
-        testInt.addLabel("test_label", "test_value_int");
-        mmi.addMetrics(testInt);
+        // test for double
+        DoubleMetrics *testDouble = mm.newMetrics("testDouble", 1.0);
+        testDouble->addLabel("testLabel", "testValue_double");
 
-        //for test double
+        mm.newMetrics("testInt", 2)
+        ->label("testLabel", "testValue_int")
+        ->label("testLabel2", "testValue_int2")
+        ->label("testLabel3", "testValue_int3");
 
-        testDouble.addLabel("test_label", "test_value_double");
-        mmd.addMetrics(testDouble);
-        res.set_content(mmd.buildMetrics(), "text/plain");
-        logger.info("Metrics sent!");
-        res.set_content(mmi.buildMetrics(), "text/plain");
-        logger.info("Metrics sent!");
+        res.set_content(mm.build(), "text/plain");
     });
 
     svr.listen("0.0.0.0", 10010);
