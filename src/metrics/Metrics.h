@@ -49,4 +49,23 @@ public:
     string get();
 };
 
+class SizeMetrics{
+public:
+    string name;
+    size_t value;
+    vector<Label> labels;
+
+    SizeMetrics(const string &name, size_t value);
+
+    void set(const string &metricsName, size_t metricsValue);
+
+    void update(size_t metricsValue);
+
+    SizeMetrics *label(string labelName, string labelValue);
+
+    void addLabel(string labelName, string labelValue);
+
+    string get();
+};
+
 #endif //PLUGIN_METRICS_H

@@ -91,3 +91,46 @@ string DoubleMetrics::get() {
     result += " " + std::to_string(this->value);
     return result;
 }
+
+SizeMetrics::SizeMetrics(const string &name, size_t value) {
+    this->name = name;
+    this->value = value;
+}
+
+void SizeMetrics::set(const string &metricsName, size_t metricsValue) {
+    this->name = metricsName;
+    this->value = metricsValue;
+}
+
+void SizeMetrics::update(size_t metricsValue) {
+    this->value = metricsValue;
+}
+
+SizeMetrics *SizeMetrics::label(string labelName, string labelValue) {
+    Label newLabel;
+    newLabel.set(std::move(labelName), std::move(labelValue));
+    this->labels.push_back(newLabel);
+    return this;
+}
+
+void SizeMetrics::addLabel(string labelName, string labelValue) {
+    Label newLabel;
+    newLabel.set(std::move(labelName), std::move(labelValue));
+    this->labels.push_back(newLabel);
+}
+
+string SizeMetrics::get() {
+    string result = "bds_" + this->name;
+    if (!this->labels.empty()) {
+        result += "{";
+        for (const auto &i: this->labels) {
+            result += i.get();
+            if (i.name != this->labels.back().name) {
+                result += ",";
+            }
+        }
+        result += "}";
+    }
+    result += " " + std::to_string(this->value);
+    return result;
+}

@@ -13,10 +13,14 @@ class MetricsManager {
 private:
     vector<IntMetrics> intMetrics;
     vector<DoubleMetrics> doubleMetrics;
+    vector<SizeMetrics> sizeMetrics;
 public:
+
     IntMetrics *newMetrics(const string &metricsName, int metricsValue);
 
     DoubleMetrics *newMetrics(const string &metricsName, double metricsValue);
+
+    SizeMetrics *newMetrics(const string &metricsName, size_t metricsValue);
 
     string build();
 };
