@@ -4,6 +4,8 @@
 
 #include "Metrics.h"
 
+#include <utility>
+
 void Label::set(string labelName, string labelValue) {
     this->name = std::move(labelName);
     this->value = std::move(labelValue);
@@ -13,35 +15,36 @@ string Label::get() const {
     return this->name + "=\"" + this->value + "\"";
 }
 
-
-void Metrics::set(string metricsName, double metricsValue, Label metricsLabels[]) {
-    this->name = std::move(metricsName);
-    this->value = metricsValue;
-    for (int i = 0; i < 16; ++i) {
-        this->labels[i] = metricsLabels[i];
-    }
+template<class T>
+Metrics<T>::Metrics(const string &name, T value) {
+    this->name = name;
+    this->value = std::move(value);
 }
 
-void Metrics::set(string metricsName, double metricsValue) {
-    this->name = std::move(metricsName);
-    this->value = metricsValue;
+template<class T>
+void Metrics<T>::set(const string& metricsName, T metricsValue) {
+    this->name = metricsName;
+    this->value = std::move(metricsValue);
 }
 
-void Metrics::addLabel(const Label& newLabel) {
-    this->labels.push_back(newLabel);
+template<class T>
+void Metrics<T>::update(T metricsValue) {
+    this->value = std::move(metricsValue);
 }
 
-void Metrics::addLabel(string labelName, string labelValue) {
+template<class T>
+void Metrics<T>::addLabel(string labelName, string labelValue){
     Label newLabel;
     newLabel.set(std::move(labelName), std::move(labelValue));
     this->addLabel(newLabel);
 }
 
-string Metrics::get() {
+template<class T>
+string Metrics<T>::get() {
     string result = "bds_" + this->name;
-    if(!this->labels.empty()){
+    if (!this->labels.empty()) {
         result += "{";
-        for (const auto& i : this->labels) {
+        for (const auto &i: this->labels) {
             result += i.get();
             if (i.name != this->labels.back().name) {
                 result += ",";
@@ -49,17 +52,32 @@ string Metrics::get() {
         }
         result += "}";
     }
-    result += " " + to_string(this->value);
+    result += " " + std::to_string(this->value);
     return result;
 }
 
-void MetricsManager::addMetrics(const Metrics& newMetrics) {
-    this->metrics.push_back(newMetrics);
+template<>
+void MetricsManager::addMetrics(const Metrics<int> &newMetrics) {
+    this->metricsInt.push_back(newMetrics);
+}
+
+template<>
+void MetricsManager::addMetrics(const Metrics<double> &newMetrics) {
+    this->metricsDouble.push_back(newMetrics);
+}
+
+template<class T>
+void MetricsManager::addMetrics(const Metrics<T> &newMetrics) {
+    // throw error if metrics type is not int or double
+    static_assert(true, "Metrics type must be int or double!");
 }
 
 string MetricsManager::buildMetrics() {
     string result;
-    for (auto & metric : this->metrics) {
+    for (auto &metric: this->metricsInt) {
+        result += metric.get() + "\n";
+    }
+    for (auto &metric: this->metricsDouble) {
         result += metric.get() + "\n";
     }
     return result;

@@ -16,11 +16,15 @@ int startServer() {
         logger.info("Metrics requested!");
         MetricsManager mm;
 
-        //for test
-        Metrics test;
-        test.set("test", 1.0);
-        test.addLabel("test", "test");
-        mm.addMetrics(test);
+        //for test int
+        Metrics<int> testInt("test_int", 1);
+        testInt.addLabel("test_label", "test_value_int");
+        mm.addMetrics<int>(testInt);
+
+        //for test double
+        Metrics<double> testDouble("test_double", 1.1);
+        testDouble.addLabel("test_label", "test_value_double");
+        mm.addMetrics<double>(testDouble);
 
         res.set_content(mm.buildMetrics(), "text/plain");
         logger.info("Metrics sent!");

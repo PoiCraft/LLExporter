@@ -5,8 +5,8 @@
 #ifndef PLUGIN_METRICS_H
 #define PLUGIN_METRICS_H
 
-#include "string"
-#include "vector"
+#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -20,28 +20,31 @@ public:
     [[nodiscard]] string get() const;
 };
 
+template<typename T>
 class Metrics {
 public:
     string name;
-    double value;
+    T value;
     vector<Label> labels;
 
-    void set(string metricsName, double metricsValue, Label metricsLabels[]);
+    Metrics(const string &name, T value);
 
-    void set(string metricsName, double metricsValue);
+    void set(const string& metricsName, T metricsValue);
 
-    void addLabel(const Label& newLabel);
+    void update(T metricsValue);
 
-    void addLabel(string labelName,string labelValue);
+    void addLabel(string labelName, string labelValue);
 
     [[nodiscard]]string get();
 };
 
 class MetricsManager {
 private:
-    vector <Metrics> metrics;
+    vector<Metrics<int>> metricsInt;
+    vector<Metrics<double>> metricsDouble;
 public:
-    void addMetrics(const Metrics& newMetrics);
+    template<typename T>
+    void addMetrics(const Metrics<T> &newMetrics);
 
     [[nodiscard]] string buildMetrics();
 };
