@@ -5,6 +5,8 @@
 #ifndef PLUGIN_EVENT_H
 #define PLUGIN_EVENT_H
 
+void initEventCounter();
+
 class EventCounter{
 public:
     size_t player_pre_join_event;
