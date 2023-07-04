@@ -1,32 +1,31 @@
-//
-// Created by gggxbbb on 2023-07-03.
-//
-
 #include "server.h"
 #include "metrics/Metrics.h"
 #include <llapi/LoggerAPI.h>
-
+extern MetricsManager<int> mmi;
+extern MetricsManager<double> mmd;
 extern Logger logger;
-
+extern Metrics<double> testDouble;
+extern Metrics<int> testInt;
 int startServer() {
     httplib::Server svr;
 
     svr.Get("/metrics", [](const httplib::Request &req, httplib::Response &res) {
 
         logger.info("Metrics requested!");
-        MetricsManager mm;
+
 
         //for test int
-        Metrics<int> testInt("test_int", 1);
+
         testInt.addLabel("test_label", "test_value_int");
-        mm.addMetrics<int>(testInt);
+        mmi.addMetrics(testInt);
 
         //for test double
-        Metrics<double> testDouble("test_double", 1.1);
-        testDouble.addLabel("test_label", "test_value_double");
-        mm.addMetrics<double>(testDouble);
 
-        res.set_content(mm.buildMetrics(), "text/plain");
+        testDouble.addLabel("test_label", "test_value_double");
+        mmd.addMetrics(testDouble);
+        res.set_content(mmd.buildMetrics(), "text/plain");
+        logger.info("Metrics sent!");
+        res.set_content(mmi.buildMetrics(), "text/plain");
         logger.info("Metrics sent!");
     });
 

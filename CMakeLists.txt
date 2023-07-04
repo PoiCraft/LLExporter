@@ -13,11 +13,14 @@ file(GLOB_RECURSE SRC_FILES_DIR
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/SDK/include
+	${CMAKE_SOURCE_DIR}/src/metrics
 )
 
 link_directories(
     ${CMAKE_SOURCE_DIR}/SDK/lib
+	${CMAKE_SOURCE_DIR}/src/metrics
 )
+
 
 add_definitions(
     -D"NDEBUG"
