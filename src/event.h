@@ -5,7 +5,11 @@
 #ifndef PLUGIN_EVENT_H
 #define PLUGIN_EVENT_H
 
+#include "metrics/MetricsManager.h"
+
 void initEventCounter();
+
+void loadEventCounterMetrics(MetricsManager& mm);
 
 class EventCounter{
 public:
@@ -69,11 +73,11 @@ public:
     size_t mob_hurt_event;
     size_t mob_die_event;
     size_t projectile_hit_entity_event;
-    size_t wither_boss_destroy_event;
-    size_t ender_dragon_destroy_event;
+    //size_t wither_boss_destroy_event;
+    //size_t ender_dragon_destroy_event;
     size_t entity_ride_event;
     size_t entity_step_on_pressure_plate_event;
-    size_t npc_cmd_event;
+    //size_t npc_cmd_event;
     size_t projectile_spawn_event;
     size_t projectile_created_event;
     size_t armor_stand_change_event;
