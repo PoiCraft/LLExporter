@@ -5,19 +5,26 @@
 #ifndef PLUGIN_EVENT_H
 #define PLUGIN_EVENT_H
 
+#include <map>
+
 #include "metrics/MetricsManager.h"
 
 void initEventCounter();
 
-void loadEventCounterMetrics(MetricsManager& mm);
+void loadEventCounterMetrics(MetricsManager &mm);
 
-class EventCounter{
+class EventCounter {
 public:
     size_t player_pre_join_event;
+    map<string, size_t> player_pre_join_detail;
     size_t player_join_event;
+    map<string, size_t> player_join_detail;
     size_t player_left_event;
+    map<string, size_t> player_left_detail;
     size_t player_respawn_event;
+    map<string, size_t> player_respawn_detail;
     size_t player_use_item_event;
+    map<string, map<string, size_t> > player_use_item_detail;
     size_t player_use_item_on_event;
     size_t player_pull_fishing_pool_event;
     size_t player_use_bucket_event;

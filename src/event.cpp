@@ -4,28 +4,65 @@
 
 #include "event.h"
 #include <llapi/EventAPI.h>
+#include <llapi/mc/Player.hpp>
+#include <llapi/mc/ItemStack.hpp>
 
 EventCounter eventCounter;
 
 void initEventCounter() {
     Event::PlayerPreJoinEvent::subscribe([](const Event::PlayerPreJoinEvent &event) {
         eventCounter.player_pre_join_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_pre_join_detail.find(player) == eventCounter.player_pre_join_detail.end()) {
+            eventCounter.player_pre_join_detail[player] = 1;
+        } else {
+            eventCounter.player_pre_join_detail[player]++;
+        }
         return true;
     });
     Event::PlayerJoinEvent::subscribe([](const Event::PlayerJoinEvent &event) {
         eventCounter.player_join_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_join_detail.find(player) == eventCounter.player_join_detail.end()) {
+            eventCounter.player_join_detail[player] = 1;
+        } else {
+            eventCounter.player_join_detail[player]++;
+        }
         return true;
     });
     Event::PlayerLeftEvent::subscribe([](const Event::PlayerLeftEvent &event) {
         eventCounter.player_left_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_left_detail.find(player) == eventCounter.player_left_detail.end()) {
+            eventCounter.player_left_detail[player] = 1;
+        } else {
+            eventCounter.player_left_detail[player]++;
+        }
         return true;
     });
     Event::PlayerRespawnEvent::subscribe([](const Event::PlayerRespawnEvent &event) {
         eventCounter.player_respawn_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_respawn_detail.find(player) == eventCounter.player_respawn_detail.end()) {
+            eventCounter.player_respawn_detail[player] = 1;
+        } else {
+            eventCounter.player_respawn_detail[player]++;
+        }
         return true;
     });
     Event::PlayerUseItemEvent::subscribe([](const Event::PlayerUseItemEvent &event) {
         eventCounter.player_use_item_event++;
+        string player = event.mPlayer->getRealName();
+        string item = event.mItemStack->getTypeName();
+        if (eventCounter.player_use_item_detail.find(player) == eventCounter.player_use_item_detail.end()) {
+            eventCounter.player_use_item_detail[player] = map<string, size_t>();
+        }
+        if (eventCounter.player_use_item_detail[player].find(item) ==
+            eventCounter.player_use_item_detail[player].end()) {
+            eventCounter.player_use_item_detail[player][item] = 1;
+        } else {
+            eventCounter.player_use_item_detail[player][item]++;
+        }
         return true;
     });
     Event::PlayerUseItemOnEvent::subscribe([](const Event::PlayerUseItemOnEvent &event) {
@@ -291,10 +328,33 @@ void initEventCounter() {
 
 void loadEventCounterMetrics(MetricsManager &mm) {
     mm.newMetrics("player_pre_join_event_count", eventCounter.player_pre_join_event);
+    for (auto &i: eventCounter.player_pre_join_detail) {
+        mm.newMetrics("player_join_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_join_event_count", eventCounter.player_join_event);
+    for (auto &i: eventCounter.player_join_detail) {
+        mm.newMetrics("player_join_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_left_event_count", eventCounter.player_left_event);
+    for (auto &i: eventCounter.player_left_detail) {
+        mm.newMetrics("player_left_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_respawn_event_count", eventCounter.player_respawn_event);
+    for (auto &i: eventCounter.player_respawn_detail) {
+        mm.newMetrics("player_respawn_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_use_item_event_count", eventCounter.player_use_item_event);
+    for (auto &i: eventCounter.player_use_item_detail) {
+        for (auto &j: i.second) {
+            mm.newMetrics("player_use_item_event_count", j.second)
+                    ->label("player", i.first)
+                    ->label("item", j.first);
+        }
+    }
     mm.newMetrics("player_use_item_on_event_count", eventCounter.player_use_item_on_event);
     mm.newMetrics("player_pull_fishing_pool_event_count", eventCounter.player_pull_fishing_pool_event);
     mm.newMetrics("player_use_bucket_event_count", eventCounter.player_use_bucket_event);
