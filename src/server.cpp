@@ -9,6 +9,9 @@
 
 extern Logger logger;
 extern EventCounter eventCounter;
+extern int tick_per_second;
+extern int legal_tick_per_second;
+//extern double ms_per_tick;
 
 int startServer() {
     httplib::Server svr;
@@ -23,6 +26,7 @@ int startServer() {
         loadLLAllowListApi(mm);
         loadEventCounterMetrics(mm);
         loadLLPLayerInfoApi(mm);
+        loadTPS(mm);
 
         res.set_content(mm.build(), "text/plain");
     });
@@ -47,4 +51,10 @@ void loadLLPLayerInfoApi(MetricsManager &mm) {
     mm.newMetrics("player_online", online);
     size_t offline = playerInfo.size() - online;
     mm.newMetrics("player_offline", offline);
+}
+
+void loadTPS(MetricsManager &mm) {
+    mm.newMetrics("tps", tick_per_second);
+    mm.newMetrics("legal_tps", legal_tick_per_second);
+    //mm.newMetrics("mspt", ms_per_tick);
 }

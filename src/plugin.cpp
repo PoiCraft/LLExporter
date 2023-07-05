@@ -10,6 +10,7 @@
 #include <thread>
 #include "server.h"
 #include "event.h"
+#include "tps.h"
 
 //extern EventCounter eventCounter;
 
@@ -24,9 +25,8 @@ void PluginInit() {
     // Your code here
     logger.info("Starting Metrics Server...");
 
-    logger.info("Registering events...");
-
     initEventCounter();
+    initTPS();
 
     std::thread serverThread(startServer);
     serverThread.detach();
