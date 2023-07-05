@@ -3,9 +3,11 @@
 //
 
 #include "event.h"
+#include "llapi/mc/HashedString.hpp"
 #include <llapi/EventAPI.h>
 #include <llapi/mc/Player.hpp>
 #include <llapi/mc/ItemStack.hpp>
+#include <llapi/mc/Block.hpp>
 
 EventCounter eventCounter;
 
@@ -67,86 +69,298 @@ void initEventCounter() {
     });
     Event::PlayerUseItemOnEvent::subscribe([](const Event::PlayerUseItemOnEvent &event) {
         eventCounter.player_use_item_on_event++;
+        string player = event.mPlayer->getRealName();
+        string item = event.mItemStack->getTypeName();
+        auto block = event.mBlockInstance;
+        HashedString hBlockName = block.getBlock()->getName();
+        const string &blockName = hBlockName.getString();
+        if (eventCounter.player_use_item_on_detail.find(player) == eventCounter.player_use_item_on_detail.end()) {
+            eventCounter.player_use_item_on_detail[player] = map<string, map<string, size_t>>();
+        }
+        if (eventCounter.player_use_item_on_detail[player].find(item) ==
+            eventCounter.player_use_item_on_detail[player].end()) {
+            eventCounter.player_use_item_on_detail[player][item] = map<string, size_t>();
+        }
+        if (eventCounter.player_use_item_on_detail[player][item].find(blockName) ==
+            eventCounter.player_use_item_on_detail[player][item].end()) {
+            eventCounter.player_use_item_on_detail[player][item][blockName] = 1;
+        } else {
+            eventCounter.player_use_item_on_detail[player][item][blockName]++;
+        }
         return true;
     });
     Event::PlayerPullFishingHookEvent::subscribe([](const Event::PlayerPullFishingHookEvent &event) {
         eventCounter.player_pull_fishing_pool_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_pull_fishing_pool_detail.find(player) ==
+            eventCounter.player_pull_fishing_pool_detail.end()) {
+            eventCounter.player_pull_fishing_pool_detail[player] = 1;
+        } else {
+            eventCounter.player_pull_fishing_pool_detail[player]++;
+        }
         return true;
     });
     Event::PlayerUseBucketEvent::subscribe([](const Event::PlayerUseBucketEvent &event) {
         eventCounter.player_use_bucket_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_use_bucket_detail.find(player) == eventCounter.player_use_bucket_detail.end()) {
+            eventCounter.player_use_bucket_detail[player] = 1;
+        } else {
+            eventCounter.player_use_bucket_detail[player]++;
+        }
         return true;
     });
     Event::PlayerChatEvent::subscribe([](const Event::PlayerChatEvent &event) {
         eventCounter.player_chat_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_chat_detail.find(player) == eventCounter.player_chat_detail.end()) {
+            eventCounter.player_chat_detail[player] = 1;
+        } else {
+            eventCounter.player_chat_detail[player]++;
+        }
         return true;
     });
     Event::PlayerChangeDimEvent::subscribe([](const Event::PlayerChangeDimEvent &event) {
         eventCounter.player_change_dim_event++;
+        string player = event.mPlayer->getRealName();
+        int targetDim = event.mToDimensionId;
+        if (eventCounter.player_change_dim_detail.find(player) == eventCounter.player_change_dim_detail.end()) {
+            eventCounter.player_change_dim_detail[player] = map<int, size_t>();
+        }
+        if (eventCounter.player_change_dim_detail[player].find(targetDim) ==
+            eventCounter.player_change_dim_detail[player].end()) {
+            eventCounter.player_change_dim_detail[player][targetDim] = 1;
+        } else {
+            eventCounter.player_change_dim_detail[player][targetDim]++;
+        }
         return true;
     });
     Event::PlayerJumpEvent::subscribe([](const Event::PlayerJumpEvent &event) {
         eventCounter.player_jump_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_jump_detail.find(player) == eventCounter.player_jump_detail.end()) {
+            eventCounter.player_jump_detail[player] = 1;
+        } else {
+            eventCounter.player_jump_detail[player]++;
+        }
         return true;
     });
     Event::PlayerSneakEvent::subscribe([](const Event::PlayerSneakEvent &event) {
         eventCounter.player_sneak_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_sneak_detail.find(player) == eventCounter.player_sneak_detail.end()) {
+            eventCounter.player_sneak_detail[player] = 1;
+        } else {
+            eventCounter.player_sneak_detail[player]++;
+        }
         return true;
     });
     Event::PlayerSwingEvent::subscribe([](const Event::PlayerSwingEvent &event) {
         eventCounter.player_swing_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_swing_detail.find(player) == eventCounter.player_swing_detail.end()) {
+            eventCounter.player_swing_detail[player] = 1;
+        } else {
+            eventCounter.player_swing_detail[player]++;
+        }
         return true;
     });
     Event::PlayerAttackEvent::subscribe([](const Event::PlayerAttackEvent &event) {
         eventCounter.player_attack_event++;
+        string player = event.mPlayer->getRealName();
+        string actor = event.mTarget->getTypeName();
+        if (eventCounter.player_attack_detail.find(player) == eventCounter.player_attack_detail.end()) {
+            eventCounter.player_attack_detail[player] = map<string, size_t>();
+        }
+        if (eventCounter.player_attack_detail[player].find(actor) == eventCounter.player_attack_detail[player].end()) {
+            eventCounter.player_attack_detail[player][actor] = 1;
+        } else {
+            eventCounter.player_attack_detail[player][actor]++;
+        }
         return true;
     });
     Event::PlayerAttackBlockEvent::subscribe([](const Event::PlayerAttackBlockEvent &event) {
         eventCounter.player_attack_block_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_attack_block_detail.find(player) == eventCounter.player_attack_block_detail.end()) {
+            eventCounter.player_attack_block_detail[player] = 1;
+        } else {
+            eventCounter.player_attack_block_detail[player]++;
+        }
         return true;
     });
     Event::PlayerDieEvent::subscribe([](const Event::PlayerDieEvent &event) {
         eventCounter.player_die_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_die_detail.find(player) == eventCounter.player_die_detail.end()) {
+            eventCounter.player_die_detail[player] = 1;
+        } else {
+            eventCounter.player_die_detail[player]++;
+        }
         return true;
     });
     Event::PlayerPickupItemEvent::subscribe([](const Event::PlayerPickupItemEvent &event) {
         eventCounter.player_pickup_item_event++;
+        string player = event.mPlayer->getRealName();
+        string item = event.mItemEntity->getTypeName();
+        if (eventCounter.player_pickup_item_detail.find(player) == eventCounter.player_pickup_item_detail.end()) {
+            eventCounter.player_pickup_item_detail[player] = map<string, size_t>();
+        }
+        if (eventCounter.player_pickup_item_detail[player].find(item) ==
+            eventCounter.player_pickup_item_detail[player].end()) {
+            eventCounter.player_pickup_item_detail[player][item] = 1;
+        } else {
+            eventCounter.player_pickup_item_detail[player][item]++;
+        }
         return true;
     });
     Event::PlayerDropItemEvent::subscribe([](const Event::PlayerDropItemEvent &event) {
         eventCounter.player_drop_item_event++;
+        string player = event.mPlayer->getRealName();
+        string item = event.mItemStack->getTypeName();
+        if (eventCounter.player_drop_item_detail.find(player) == eventCounter.player_drop_item_detail.end()) {
+            eventCounter.player_drop_item_detail[player] = map<string, size_t>();
+        }
+        if (eventCounter.player_drop_item_detail[player].find(item) ==
+            eventCounter.player_drop_item_detail[player].end()) {
+            eventCounter.player_drop_item_detail[player][item] = 1;
+        } else {
+            eventCounter.player_drop_item_detail[player][item]++;
+        }
         return true;
     });
     Event::PlayerEatEvent::subscribe([](const Event::PlayerEatEvent &event) {
         eventCounter.player_eat_event++;
+        string player = event.mPlayer->getRealName();
+        string item = event.mFoodItem->getTypeName();
+        if (eventCounter.player_eat_detail.find(player) == eventCounter.player_eat_detail.end()) {
+            eventCounter.player_eat_detail[player] = map<string, size_t>();
+        }
+        if (eventCounter.player_eat_detail[player].find(item) == eventCounter.player_eat_detail[player].end()) {
+            eventCounter.player_eat_detail[player][item] = 1;
+        } else {
+            eventCounter.player_eat_detail[player][item]++;
+        }
         return true;
     });
     Event::PlayerAteEvent::subscribe([](const Event::PlayerAteEvent &event) {
         eventCounter.player_ate_event++;
+        string player = event.mPlayer->getRealName();
+        string item = event.mFoodItem->getTypeName();
+        if (eventCounter.player_ate_detail.find(player) == eventCounter.player_ate_detail.end()) {
+            eventCounter.player_ate_detail[player] = map<string, size_t>();
+        }
+        if (eventCounter.player_ate_detail[player].find(item) == eventCounter.player_ate_detail[player].end()) {
+            eventCounter.player_ate_detail[player][item] = 1;
+        } else {
+            eventCounter.player_ate_detail[player][item]++;
+        }
         return true;
     });
     Event::PlayerConsumeTotemEvent::subscribe([](const Event::PlayerConsumeTotemEvent &event) {
         eventCounter.player_consume_totem_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_consume_totem_detail.find(player) == eventCounter.player_consume_totem_detail.end()) {
+            eventCounter.player_consume_totem_detail[player] = 1;
+        } else {
+            eventCounter.player_consume_totem_detail[player]++;
+        }
         return true;
     });
     Event::PlayerCmdEvent::subscribe([](const Event::PlayerCmdEvent &event) {
         eventCounter.player_cmd_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_cmd_detail.find(player) == eventCounter.player_cmd_detail.end()) {
+            eventCounter.player_cmd_detail[player] = 1;
+        } else {
+            eventCounter.player_cmd_detail[player]++;
+        }
         return true;
     });
     Event::PlayerEffectChangedEvent::subscribe([](const Event::PlayerEffectChangedEvent &event) {
         eventCounter.player_effect_changed_event++;
+        string player = event.mPlayer->getRealName();
+        string effect = event.mEffect->getDisplayName();
+        string type;
+        switch (event.mEventType) {
+            case Event::PlayerEffectChangedEvent::EventType::Add:
+                type = "add";
+                break;
+            case Event::PlayerEffectChangedEvent::EventType::Remove:
+                type = "remove";
+                break;
+            case Event::PlayerEffectChangedEvent::EventType::Update:
+                type = "update";
+                break;
+            default:
+                type = "unknown";
+                break;
+        }
+        if (eventCounter.player_effect_changed_detail.find(player) == eventCounter.player_effect_changed_detail.end()) {
+            eventCounter.player_effect_changed_detail[player] = map<string, map<string, size_t>>();
+        }
+        if (eventCounter.player_effect_changed_detail[player].find(effect) ==
+            eventCounter.player_effect_changed_detail[player].end()) {
+            eventCounter.player_effect_changed_detail[player][effect] = map<string, size_t>();
+        }
+        if (eventCounter.player_effect_changed_detail[player][effect].find(type) ==
+            eventCounter.player_effect_changed_detail[player][effect].end()) {
+            eventCounter.player_effect_changed_detail[player][effect][type] = 1;
+        } else {
+            eventCounter.player_effect_changed_detail[player][effect][type]++;
+        }
         return true;
     });
     Event::PlayerStartDestroyBlockEvent::subscribe([](const Event::PlayerStartDestroyBlockEvent &event) {
         eventCounter.player_start_destroy_block_event++;
+        string player = event.mPlayer->getRealName();
+        auto block = event.mBlockInstance;
+        HashedString hBlockName = block.getBlock()->getName();
+        const string &blockName = hBlockName.getString();
+        if (eventCounter.player_start_destroy_block_detail.find(player) ==
+            eventCounter.player_start_destroy_block_detail.end()) {
+            eventCounter.player_start_destroy_block_detail[player] = map<string, size_t>();
+        }
+        if (eventCounter.player_start_destroy_block_detail[player].find(blockName) ==
+            eventCounter.player_start_destroy_block_detail[player].end()) {
+            eventCounter.player_start_destroy_block_detail[player][blockName] = 1;
+        } else {
+            eventCounter.player_start_destroy_block_detail[player][blockName]++;
+        }
         return true;
     });
     Event::PlayerDestroyBlockEvent::subscribe([](const Event::PlayerDestroyBlockEvent &event) {
         eventCounter.player_destroy_block_event++;
+        string player = event.mPlayer->getRealName();
+        auto block = event.mBlockInstance;
+        HashedString hBlockName = block.getBlock()->getName();
+        const string &blockName = hBlockName.getString();
+        if (eventCounter.player_destroy_block_detail.find(player) == eventCounter.player_destroy_block_detail.end()) {
+            eventCounter.player_destroy_block_detail[player] = map<string, size_t>();
+        }
+        if (eventCounter.player_destroy_block_detail[player].find(blockName) ==
+            eventCounter.player_destroy_block_detail[player].end()) {
+            eventCounter.player_destroy_block_detail[player][blockName] = 1;
+        } else {
+            eventCounter.player_destroy_block_detail[player][blockName]++;
+        }
         return true;
     });
     Event::PlayerPlaceBlockEvent::subscribe([](const Event::PlayerPlaceBlockEvent &event) {
         eventCounter.player_place_block_event++;
+        string player = event.mPlayer->getRealName();
+        auto block = event.mBlockInstance;
+        HashedString hBlockName = block.getBlock()->getName();
+        const string &blockName = hBlockName.getString();
+        if (eventCounter.player_place_block_detail.find(player) == eventCounter.player_place_block_detail.end()) {
+            eventCounter.player_place_block_detail[player] = map<string, size_t>();
+        }
+        if (eventCounter.player_place_block_detail[player].find(blockName) ==
+            eventCounter.player_place_block_detail[player].end()) {
+            eventCounter.player_place_block_detail[player][blockName] = 1;
+        } else {
+            eventCounter.player_place_block_detail[player][blockName]++;
+        }
         return true;
     });
     Event::BlockPlacedByPlayerEvent::subscribe([](const Event::BlockPlacedByPlayerEvent &event) {
@@ -356,26 +570,149 @@ void loadEventCounterMetrics(MetricsManager &mm) {
         }
     }
     mm.newMetrics("player_use_item_on_event_count", eventCounter.player_use_item_on_event);
+    for (auto &i: eventCounter.player_use_item_on_detail) {
+        for (auto &j: i.second) {
+            for (auto &k: j.second) {
+                mm.newMetrics("player_use_item_on_event_count", k.second)
+                        ->label("player", i.first)
+                        ->label("item", j.first)
+                        ->label("target", k.first);
+            }
+        }
+    }
     mm.newMetrics("player_pull_fishing_pool_event_count", eventCounter.player_pull_fishing_pool_event);
+    for (auto &i: eventCounter.player_pull_fishing_pool_detail) {
+        mm.newMetrics("player_pull_fishing_pool_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_use_bucket_event_count", eventCounter.player_use_bucket_event);
+    for (auto &i: eventCounter.player_use_bucket_detail) {
+        mm.newMetrics("player_use_bucket_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_chat_event_count", eventCounter.player_chat_event);
+    for (auto &i: eventCounter.player_chat_detail) {
+        mm.newMetrics("player_chat_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_change_dim_event_count", eventCounter.player_change_dim_event);
+    for (auto &i: eventCounter.player_change_dim_detail) {
+        for (auto &j: i.second) {
+            mm.newMetrics("player_change_dim_event_count", j.second)
+                    ->label("player", i.first)
+                    ->label("to", to_string(j.first));
+        }
+    }
     mm.newMetrics("player_jump_event_count", eventCounter.player_jump_event);
+    for (auto &i: eventCounter.player_jump_detail) {
+        mm.newMetrics("player_jump_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_sneak_event_count", eventCounter.player_sneak_event);
+    for (auto &i: eventCounter.player_sneak_detail) {
+        mm.newMetrics("player_sneak_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_swing_event_count", eventCounter.player_swing_event);
+    for (auto &i: eventCounter.player_swing_detail) {
+        mm.newMetrics("player_swing_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_attack_event_count", eventCounter.player_attack_event);
+    for (auto &i: eventCounter.player_attack_detail) {
+        for (auto &j: i.second) {
+            mm.newMetrics("player_attack_event_count", j.second)
+                    ->label("player", i.first)
+                    ->label("target", j.first);
+        }
+    }
     mm.newMetrics("player_attack_block_event_count", eventCounter.player_attack_block_event);
+    for (auto &i: eventCounter.player_attack_block_detail) {
+        mm.newMetrics("player_attack_block_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_die_event_count", eventCounter.player_die_event);
+    for (auto &i: eventCounter.player_die_detail) {
+        mm.newMetrics("player_die_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_pickup_item_event_count", eventCounter.player_pickup_item_event);
+    for (auto &i: eventCounter.player_pickup_item_detail) {
+        for (auto &j: i.second) {
+            mm.newMetrics("player_pickup_item_event_count", j.second)
+                    ->label("player", i.first)
+                    ->label("item", j.first);
+        }
+    }
     mm.newMetrics("player_drop_item_event_count", eventCounter.player_drop_item_event);
+    for (auto &i: eventCounter.player_drop_item_detail) {
+        for (auto &j: i.second) {
+            mm.newMetrics("player_drop_item_event_count", j.second)
+                    ->label("player", i.first)
+                    ->label("item", j.first);
+        }
+    }
     mm.newMetrics("player_eat_event_count", eventCounter.player_eat_event);
+    for (auto &i: eventCounter.player_eat_detail) {
+        for (auto &j: i.second) {
+            mm.newMetrics("player_eat_event_count", j.second)
+                    ->label("player", i.first)
+                    ->label("item", j.first);
+        }
+    }
     mm.newMetrics("player_ate_event_count", eventCounter.player_ate_event);
+    for (auto &i: eventCounter.player_ate_detail) {
+        for (auto &j: i.second) {
+            mm.newMetrics("player_ate_event_count", j.second)
+                    ->label("player", i.first)
+                    ->label("item", j.first);
+        }
+    }
     mm.newMetrics("player_consume_totem_event_count", eventCounter.player_consume_totem_event);
+    for (auto &i: eventCounter.player_consume_totem_detail) {
+        mm.newMetrics("player_consume_totem_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_cmd_event_count", eventCounter.player_cmd_event);
+    for (auto &i: eventCounter.player_cmd_detail) {
+        mm.newMetrics("player_cmd_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_effect_changed_event_count", eventCounter.player_effect_changed_event);
+    for (auto &i: eventCounter.player_effect_changed_detail) {
+        for (auto &j: i.second) {
+            for (auto &k: j.second) {
+                mm.newMetrics("player_effect_changed_event_count", k.second)
+                        ->label("player", i.first)
+                        ->label("effect", j.first)
+                        ->label("type", k.first);
+            }
+        }
+    }
     mm.newMetrics("player_start_destroy_block_event_count", eventCounter.player_start_destroy_block_event);
+    for (auto &i: eventCounter.player_start_destroy_block_detail) {
+        for (auto &j: i.second) {
+            mm.newMetrics("player_start_destroy_block_event_count", j.second)
+                    ->label("player", i.first)
+                    ->label("block", j.first);
+        }
+    }
     mm.newMetrics("player_destroy_block_event_count", eventCounter.player_destroy_block_event);
+    for (auto &i: eventCounter.player_destroy_block_detail) {
+        for (auto &j: i.second) {
+            mm.newMetrics("player_destroy_block_event_count", j.second)
+                    ->label("player", i.first)
+                    ->label("block", j.first);
+        }
+    }
     mm.newMetrics("player_place_block_event_count", eventCounter.player_place_block_event);
+    for (auto &i: eventCounter.player_place_block_detail) {
+        for (auto &j: i.second) {
+            mm.newMetrics("player_place_block_event_count", j.second)
+                    ->label("player", i.first)
+                    ->label("on_block", j.first);
+        }
+    }
     mm.newMetrics("block_placed_by_player_event_count", eventCounter.block_placed_by_player_event);
     mm.newMetrics("player_open_container_event_count", eventCounter.player_open_container_event);
     mm.newMetrics("player_close_container_event_count", eventCounter.player_close_container_event);
