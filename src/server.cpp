@@ -20,8 +20,6 @@ int startServer() {
 
     svr.Get("/metrics", [](const httplib::Request &req, httplib::Response &res) {
 
-        logger.info("Metrics requested!");
-
         MetricsManager mm;
 
         loadLLServerApi(mm);
@@ -34,7 +32,7 @@ int startServer() {
         res.set_content(mm.build(), "text/plain");
     });
 
-    svr.listen("0.0.0.0", 10010);
+    svr.listen("0.0.0.0", 10009);
     return 0;
 }
 

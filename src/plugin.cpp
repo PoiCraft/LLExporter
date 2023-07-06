@@ -30,5 +30,5 @@ void PluginInit() {
 
     std::thread serverThread(startServer);
     serverThread.detach();
-    logger.info("Metrics Server started, running on port 10010!");
+    logger.info("Metrics Server started, running on port 10009!");
 }
