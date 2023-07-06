@@ -32,4 +32,6 @@ void loadLLPLayerInfoApi(MetricsManager& mm);
 
 void loadTPS(MetricsManager& mm);
 
+void loadLevelData(MetricsManager& mm);
+
 #endif //PLUGIN_SERVER_H

@@ -4,6 +4,8 @@
 #include <llapi/ServerAPI.h>
 #include <llapi/AllowListAPI.h>
 #include <llapi/PlayerInfoAPI.h>
+#include <llapi/mc/Level.hpp>
+#include <llapi/mc/Actor.hpp>
 
 #include "event.h"
 
@@ -26,6 +28,7 @@ int startServer() {
         loadLLAllowListApi(mm);
         loadEventCounterMetrics(mm);
         loadLLPLayerInfoApi(mm);
+        loadLevelData(mm);
         loadTPS(mm);
 
         res.set_content(mm.build(), "text/plain");
@@ -57,4 +60,26 @@ void loadTPS(MetricsManager &mm) {
     mm.newMetrics("tps", tick_per_second);
     mm.newMetrics("legal_tps", legal_tick_per_second);
     //mm.newMetrics("mspt", ms_per_tick);
+}
+
+void loadLevelData(MetricsManager &mm) {
+    auto all_players = Level::getAllPlayers();
+    mm.newMetrics("level_player", all_players.size());
+
+    auto all_entities = Level::getAllEntities();
+    mm.newMetrics("level_entities", all_entities.size());
+
+    map<string, size_t> all_entities_detail;
+    for (auto &entity: all_entities) {
+        string type_name = entity->getTypeName();
+        if (all_entities_detail.find(type_name) == all_entities_detail.end()) {
+            all_entities_detail[type_name] = 1;
+        } else {
+            all_entities_detail[type_name] += 1;
+        }
+    }
+    for (auto &entity: all_entities_detail) {
+        mm.newMetrics("level_entities", entity.second)
+                ->label("type", entity.first);
+    }
 }
