@@ -14,12 +14,6 @@ EventCounter eventCounter;
 void initEventCounter() {
     Event::PlayerPreJoinEvent::subscribe([](const Event::PlayerPreJoinEvent &event) {
         eventCounter.player_pre_join_event++;
-        string player = event.mPlayer->getRealName();
-        if (eventCounter.player_pre_join_detail.find(player) == eventCounter.player_pre_join_detail.end()) {
-            eventCounter.player_pre_join_detail[player] = 1;
-        } else {
-            eventCounter.player_pre_join_detail[player]++;
-        }
         return true;
     });
     Event::PlayerJoinEvent::subscribe([](const Event::PlayerJoinEvent &event) {
@@ -92,11 +86,16 @@ void initEventCounter() {
     Event::PlayerPullFishingHookEvent::subscribe([](const Event::PlayerPullFishingHookEvent &event) {
         eventCounter.player_pull_fishing_pool_event++;
         string player = event.mPlayer->getRealName();
+        string item = event.mItemStack->getTypeName();
         if (eventCounter.player_pull_fishing_pool_detail.find(player) ==
             eventCounter.player_pull_fishing_pool_detail.end()) {
-            eventCounter.player_pull_fishing_pool_detail[player] = 1;
+            eventCounter.player_pull_fishing_pool_detail[player] = map<string, size_t>();
+        }
+        if (eventCounter.player_pull_fishing_pool_detail[player].find(item) ==
+            eventCounter.player_pull_fishing_pool_detail[player].end()) {
+            eventCounter.player_pull_fishing_pool_detail[player][item] = 1;
         } else {
-            eventCounter.player_pull_fishing_pool_detail[player]++;
+            eventCounter.player_pull_fishing_pool_detail[player][item]++;
         }
         return true;
     });
@@ -365,58 +364,178 @@ void initEventCounter() {
     });
     Event::BlockPlacedByPlayerEvent::subscribe([](const Event::BlockPlacedByPlayerEvent &event) {
         eventCounter.block_placed_by_player_event++;
+        string player = event.mPlayer->getRealName();
+        auto block = event.mBlockInstance;
+        HashedString hBlockName = block.getBlock()->getName();
+        const string &blockName = hBlockName.getString();
+        if (eventCounter.block_placed_by_player_detail.find(player) ==
+            eventCounter.block_placed_by_player_detail.end()) {
+            eventCounter.block_placed_by_player_detail[player] = map<string, size_t>();
+        }
+        if (eventCounter.block_placed_by_player_detail[player].find(blockName) ==
+            eventCounter.block_placed_by_player_detail[player].end()) {
+            eventCounter.block_placed_by_player_detail[player][blockName] = 1;
+        } else {
+            eventCounter.block_placed_by_player_detail[player][blockName]++;
+        }
         return true;
     });
     Event::PlayerOpenContainerEvent::subscribe([](const Event::PlayerOpenContainerEvent &event) {
         eventCounter.player_open_container_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_open_container_detail.find(player) == eventCounter.player_open_container_detail.end()) {
+            eventCounter.player_open_container_detail[player] = 1;
+        } else {
+            eventCounter.player_open_container_detail[player]++;
+        }
         return true;
     });
     Event::PlayerCloseContainerEvent::subscribe([](const Event::PlayerCloseContainerEvent &event) {
         eventCounter.player_close_container_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_close_container_detail.find(player) ==
+            eventCounter.player_close_container_detail.end()) {
+            eventCounter.player_close_container_detail[player] = 1;
+        } else {
+            eventCounter.player_close_container_detail[player]++;
+        }
         return true;
     });
     Event::PlayerInventoryChangeEvent::subscribe([](const Event::PlayerInventoryChangeEvent &event) {
         eventCounter.player_inventory_change_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_inventory_change_detail.find(player) ==
+            eventCounter.player_inventory_change_detail.end()) {
+            eventCounter.player_inventory_change_detail[player] = 1;
+        } else {
+            eventCounter.player_inventory_change_detail[player]++;
+        }
         return true;
     });
     Event::PlayerSprintEvent::subscribe([](const Event::PlayerSprintEvent &event) {
         eventCounter.player_sprint_event++;
+        string player = event.mPlayer->getRealName();
+        string isSprinting = event.mIsSprinting ? "true" : "false";
+        if (eventCounter.player_sprint_detail.find(player) == eventCounter.player_sprint_detail.end()) {
+            eventCounter.player_sprint_detail[player] = map<string, size_t>();
+        }
+        if (eventCounter.player_sprint_detail[player].find(isSprinting) ==
+            eventCounter.player_sprint_detail[player].end()) {
+            eventCounter.player_sprint_detail[player][isSprinting] = 1;
+        } else {
+            eventCounter.player_sprint_detail[player][isSprinting]++;
+        }
         return true;
     });
     Event::PlayerSetArmorEvent::subscribe([](const Event::PlayerSetArmorEvent &event) {
         eventCounter.player_set_armor_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_set_armor_detail.find(player) == eventCounter.player_set_armor_detail.end()) {
+            eventCounter.player_set_armor_detail[player] = 1;
+        } else {
+            eventCounter.player_set_armor_detail[player]++;
+        }
         return true;
     });
     Event::PlayerUseRespawnAnchorEvent::subscribe([](const Event::PlayerUseRespawnAnchorEvent &event) {
         eventCounter.player_use_respawn_anchor_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_use_respawn_anchor_detail.find(player) ==
+            eventCounter.player_use_respawn_anchor_detail.end()) {
+            eventCounter.player_use_respawn_anchor_detail[player] = 1;
+        } else {
+            eventCounter.player_use_respawn_anchor_detail[player]++;
+        }
         return true;
     });
     Event::PlayerOpenContainerScreenEvent::subscribe([](const Event::PlayerOpenContainerScreenEvent &event) {
         eventCounter.player_open_container_screen_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_open_container_screen_detail.find(player) ==
+            eventCounter.player_open_container_screen_detail.end()) {
+            eventCounter.player_open_container_screen_detail[player] = 1;
+        } else {
+            eventCounter.player_open_container_screen_detail[player]++;
+        }
         return true;
     });
     Event::PlayerUseFrameBlockEvent::subscribe([](const Event::PlayerUseFrameBlockEvent &event) {
         eventCounter.player_use_frame_block_event++;
+        string player = event.mPlayer->getRealName();
+        auto block = event.mBlockInstance;
+        HashedString hBlockName = block.getBlock()->getName();
+        const string &blockName = hBlockName.getString();
+        string type;
+        switch (event.mType) {
+            case Event::PlayerUseFrameBlockEvent::Type::None:
+                type = "None";
+                break;
+            case Event::PlayerUseFrameBlockEvent::Type::Use:
+                type = "Use";
+                break;
+            case Event::PlayerUseFrameBlockEvent::Type::Attack:
+                type = "Attack";
+                break;
+        }
+        if (eventCounter.player_use_frame_block_detail.find(player) ==
+            eventCounter.player_use_frame_block_detail.end()) {
+            eventCounter.player_use_frame_block_detail[player] = map<string, map<string, size_t>>();
+        }
+        if (eventCounter.player_use_frame_block_detail[player].find(blockName) ==
+            eventCounter.player_use_frame_block_detail[player].end()) {
+            eventCounter.player_use_frame_block_detail[player][blockName] = map<string, size_t>();
+        }
+        if (eventCounter.player_use_frame_block_detail[player][blockName].find(type) ==
+            eventCounter.player_use_frame_block_detail[player][blockName].end()) {
+            eventCounter.player_use_frame_block_detail[player][blockName][type] = 1;
+        } else {
+            eventCounter.player_use_frame_block_detail[player][blockName][type]++;
+        }
         return true;
     });
     Event::PlayerScoreChangedEvent::subscribe([](const Event::PlayerScoreChangedEvent &event) {
         eventCounter.player_score_changed_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_score_changed_detail.find(player) == eventCounter.player_score_changed_detail.end()) {
+            eventCounter.player_score_changed_detail[player] = 1;
+        } else {
+            eventCounter.player_score_changed_detail[player]++;
+        }
         return true;
     });
     Event::PlayerExperienceAddEvent::subscribe([](const Event::PlayerExperienceAddEvent &event) {
         eventCounter.player_experience_add_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_experience_add_detail.find(player) == eventCounter.player_experience_add_detail.end()) {
+            eventCounter.player_experience_add_detail[player] = 1;
+        } else {
+            eventCounter.player_experience_add_detail[player]++;
+        }
         return true;
     });
     Event::PlayerInteractEntityEvent::subscribe([](const Event::PlayerInteractEntityEvent &event) {
         eventCounter.player_interact_entity_event++;
+        //auto mPlayer = event.mPlayer;
         return true;
     });
     Event::PlayerBedEnterEvent::subscribe([](const Event::PlayerBedEnterEvent &event) {
         eventCounter.player_bed_enter_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_bed_enter_detail.find(player) == eventCounter.player_bed_enter_detail.end()) {
+            eventCounter.player_bed_enter_detail[player] = 1;
+        } else {
+            eventCounter.player_bed_enter_detail[player]++;
+        }
         return true;
     });
     Event::PlayerOpenInventoryEvent::subscribe([](const Event::PlayerOpenInventoryEvent &event) {
         eventCounter.player_open_inventory_event++;
+        string player = event.mPlayer->getRealName();
+        if (eventCounter.player_open_inventory_detail.find(player) == eventCounter.player_open_inventory_detail.end()) {
+            eventCounter.player_open_inventory_detail[player] = 1;
+        } else {
+            eventCounter.player_open_inventory_detail[player]++;
+        }
         return true;
     });
 
@@ -542,10 +661,6 @@ void initEventCounter() {
 
 void loadEventCounterMetrics(MetricsManager &mm) {
     mm.newMetrics("player_pre_join_event_count", eventCounter.player_pre_join_event);
-    for (auto &i: eventCounter.player_pre_join_detail) {
-        mm.newMetrics("player_join_event_count", i.second)
-                ->label("player", i.first);
-    }
     mm.newMetrics("player_join_event_count", eventCounter.player_join_event);
     for (auto &i: eventCounter.player_join_detail) {
         mm.newMetrics("player_join_event_count", i.second)
@@ -582,8 +697,11 @@ void loadEventCounterMetrics(MetricsManager &mm) {
     }
     mm.newMetrics("player_pull_fishing_pool_event_count", eventCounter.player_pull_fishing_pool_event);
     for (auto &i: eventCounter.player_pull_fishing_pool_detail) {
-        mm.newMetrics("player_pull_fishing_pool_event_count", i.second)
-                ->label("player", i.first);
+        for (auto &j: i.second) {
+            mm.newMetrics("player_pull_fishing_pool_event_count", j.second)
+                    ->label("player", i.first)
+                    ->label("item", j.first);
+        }
     }
     mm.newMetrics("player_use_bucket_event_count", eventCounter.player_use_bucket_event);
     for (auto &i: eventCounter.player_use_bucket_detail) {
@@ -714,19 +832,83 @@ void loadEventCounterMetrics(MetricsManager &mm) {
         }
     }
     mm.newMetrics("block_placed_by_player_event_count", eventCounter.block_placed_by_player_event);
+    for (auto &i: eventCounter.block_placed_by_player_detail) {
+        for (auto &j: i.second) {
+            mm.newMetrics("block_placed_by_player_event_count", j.second)
+                    ->label("player", i.first)
+                    ->label("block", j.first);
+        }
+    }
     mm.newMetrics("player_open_container_event_count", eventCounter.player_open_container_event);
+    for (auto &i: eventCounter.player_open_container_detail) {
+        mm.newMetrics("player_open_container_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_close_container_event_count", eventCounter.player_close_container_event);
+    for (auto &i: eventCounter.player_close_container_detail) {
+        mm.newMetrics("player_close_container_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_inventory_change_event_count", eventCounter.player_inventory_change_event);
+    for (auto &i: eventCounter.player_inventory_change_detail) {
+        mm.newMetrics("player_inventory_change_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_sprint_event_count", eventCounter.player_sprint_event);
+    for (auto &i: eventCounter.player_sprint_detail) {
+        for (auto &j: i.second) {
+            mm.newMetrics("player_sprint_event_count", j.second)
+                    ->label("player", i.first)
+                    ->label("is_sprinting", j.first);
+        }
+    }
     mm.newMetrics("player_set_armor_event_count", eventCounter.player_set_armor_event);
+    for (auto &i: eventCounter.player_set_armor_detail) {
+        mm.newMetrics("player_set_armor_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_use_respawn_anchor_event_count", eventCounter.player_use_respawn_anchor_event);
+    for (auto &i: eventCounter.player_use_respawn_anchor_detail) {
+        mm.newMetrics("player_use_respawn_anchor_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_open_container_screen_event_count", eventCounter.player_open_container_screen_event);
+    for (auto &i: eventCounter.player_open_container_screen_detail) {
+        mm.newMetrics("player_open_container_screen_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_use_frame_block_event_count", eventCounter.player_use_frame_block_event);
+    for (auto &i: eventCounter.player_use_frame_block_detail) {
+        for (auto &j: i.second) {
+            for (auto &k: j.second) {
+                mm.newMetrics("player_use_frame_block_event_count", k.second)
+                        ->label("player", i.first)
+                        ->label("block", j.first)
+                        ->label("type", k.first);
+            }
+        }
+    }
     mm.newMetrics("player_score_changed_event_count", eventCounter.player_score_changed_event);
+    for (auto &i: eventCounter.player_score_changed_detail) {
+        mm.newMetrics("player_score_changed_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_experience_add_event_count", eventCounter.player_experience_add_event);
+    for (auto &i: eventCounter.player_experience_add_detail) {
+        mm.newMetrics("player_experience_add_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_interact_entity_event_count", eventCounter.player_interact_entity_event);
     mm.newMetrics("player_bed_enter_event_count", eventCounter.player_bed_enter_event);
+    for (auto &i: eventCounter.player_bed_enter_detail) {
+        mm.newMetrics("player_bed_enter_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("player_open_inventory_event_count", eventCounter.player_open_inventory_event);
+    for (auto &i: eventCounter.player_open_inventory_detail) {
+        mm.newMetrics("player_open_inventory_event_count", i.second)
+                ->label("player", i.first);
+    }
     mm.newMetrics("block_interacted_event_count", eventCounter.block_interacted_event);
     mm.newMetrics("block_changed_event_count", eventCounter.block_changed_event);
     mm.newMetrics("block_exploded_event_count", eventCounter.block_exploded_event);

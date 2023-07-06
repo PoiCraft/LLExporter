@@ -16,7 +16,6 @@ void loadEventCounterMetrics(MetricsManager &mm);
 class EventCounter {
 public:
     size_t player_pre_join_event;
-    map<string, size_t> player_pre_join_detail;
     size_t player_join_event;
     map<string, size_t> player_join_detail;
     size_t player_left_event;
@@ -28,7 +27,7 @@ public:
     size_t player_use_item_on_event;
     map<string, map<string, map<string, size_t> > > player_use_item_on_detail;
     size_t player_pull_fishing_pool_event;
-    map<string, size_t> player_pull_fishing_pool_detail;
+    map<string, map<string, size_t>> player_pull_fishing_pool_detail;
     size_t player_use_bucket_event;
     map<string, size_t> player_use_bucket_detail;
     size_t player_chat_event;
@@ -68,19 +67,33 @@ public:
     size_t player_place_block_event;
     map<string, map<string, size_t>> player_place_block_detail;
     size_t block_placed_by_player_event;
+    map<string, map<string, size_t>> block_placed_by_player_detail;
     size_t player_open_container_event;
+    map<string, size_t> player_open_container_detail;
     size_t player_close_container_event;
+    map<string, size_t> player_close_container_detail;
     size_t player_inventory_change_event;
+    map<string, size_t> player_inventory_change_detail;
     size_t player_sprint_event;
+    map<string, map<string, size_t> > player_sprint_detail;
     size_t player_set_armor_event;
+    map<string, size_t> player_set_armor_detail;
     size_t player_use_respawn_anchor_event;
+    map<string, size_t> player_use_respawn_anchor_detail;
     size_t player_open_container_screen_event;
+    map<string, size_t> player_open_container_screen_detail;
     size_t player_use_frame_block_event;
+    map<string, map<string, map<string, size_t> > > player_use_frame_block_detail;
     size_t player_score_changed_event;
+    map<string, size_t> player_score_changed_detail;
     size_t player_experience_add_event;
+    map<string, size_t> player_experience_add_detail;
     size_t player_interact_entity_event;
+    //todo: map<string, map<string, map<string, size_t> > > player_interact_entity_detail;
     size_t player_bed_enter_event;
+    map<string, size_t> player_bed_enter_detail;
     size_t player_open_inventory_event;
+    map<string, size_t> player_open_inventory_detail;
 
     size_t block_interacted_event;
     size_t block_changed_event;
