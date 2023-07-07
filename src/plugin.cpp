@@ -4,6 +4,7 @@
  */
 
 #include <llapi/LoggerAPI.h>
+#include <llapi/EventAPI.h>
 
 #include "version.h"
 
@@ -23,14 +24,21 @@ extern Logger logger;
  *        
  */
 void PluginInit() {
-    // Your code here
-    logger.info("Starting Metrics Server...");
+    logger.info("Waiting for server to start...");
 
-    setUpTime();
-    initEventCounter();
-    initTPS();
+    Event::ServerStartedEvent::subscribe([](const Event::ServerStartedEvent &event) {
 
-    std::thread serverThread(startServer);
-    serverThread.detach();
-    logger.info("Metrics Server started, running on port 10009!");
+        logger.info("Starting Metrics Server...");
+
+        setUpTime();
+        initEventCounter();
+        initTPS();
+
+        std::thread serverThread(startServer);
+        serverThread.detach();
+        logger.info("Metrics Server started, running on port 10009!");
+
+        return true;
+    });
+
 }
