@@ -9,6 +9,8 @@
 
 #include "event.h"
 
+#include <ctime>
+
 extern Logger logger;
 extern EventCounter eventCounter;
 extern int tick_per_second;
@@ -86,4 +88,6 @@ void loadLevelData(MetricsManager &mm) {
 
 void loadUpTime(MetricsManager &mm) {
     mm.newMetrics("up_time", up_time);
+    size_t now = time(nullptr);
+    mm.newMetrics("now_time", now);
 }
