@@ -34,4 +34,6 @@ void loadTPS(MetricsManager& mm);
 
 void loadLevelData(MetricsManager& mm);
 
+void loadUpTime(MetricsManager& mm);
+
 #endif //PLUGIN_SERVER_H

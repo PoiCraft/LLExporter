@@ -13,6 +13,7 @@ extern Logger logger;
 extern EventCounter eventCounter;
 extern int tick_per_second;
 extern int legal_tick_per_second;
+extern size_t up_time;
 //extern double ms_per_tick;
 
 int startServer() {
@@ -28,6 +29,7 @@ int startServer() {
         loadLLPLayerInfoApi(mm);
         loadLevelData(mm);
         loadTPS(mm);
+        loadUpTime(mm);
 
         res.set_content(mm.build(), "text/plain");
     });
@@ -80,4 +82,8 @@ void loadLevelData(MetricsManager &mm) {
         mm.newMetrics("level_entities", entity.second)
                 ->label("type", entity.first);
     }
+}
+
+void loadUpTime(MetricsManager &mm) {
+    mm.newMetrics("up_time", up_time);
 }

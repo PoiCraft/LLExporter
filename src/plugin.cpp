@@ -11,6 +11,7 @@
 #include "server.h"
 #include "event.h"
 #include "tps.h"
+#include "global.h"
 
 //extern EventCounter eventCounter;
 
@@ -25,6 +26,7 @@ void PluginInit() {
     // Your code here
     logger.info("Starting Metrics Server...");
 
+    setUpTime();
     initEventCounter();
     initTPS();
 
