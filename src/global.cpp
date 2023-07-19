@@ -6,6 +6,9 @@
 
 #include <ctime>
 
+/**
+ * @brief The time when the server is ready
+ */
 size_t up_time = 0;
 
 void setUpTime(){

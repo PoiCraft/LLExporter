@@ -9,10 +9,20 @@
 
 #include "metrics/MetricsManager.h"
 
+/**
+ * @brief Initialize the event counter, subscribe all events needed
+ */
 void initEventCounter();
 
+/**
+ * @brief Load event counter metrics, add them to MetricsManager
+ * @param mm The MetricsManager
+ */
 void loadEventCounterMetrics(MetricsManager &mm);
 
+/**
+ * @brief The event counter, designed to count events needed
+ */
 class EventCounter {
 public:
     size_t player_pre_join_event;

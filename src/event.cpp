@@ -9,7 +9,11 @@
 #include <llapi/mc/ItemStack.hpp>
 #include <llapi/mc/Block.hpp>
 
+/**
+ * @brief The global event counter
+ */
 EventCounter eventCounter;
+
 
 void initEventCounter() {
     Event::PlayerPreJoinEvent::subscribe([](const Event::PlayerPreJoinEvent &event) {

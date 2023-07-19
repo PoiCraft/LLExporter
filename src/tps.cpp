@@ -6,10 +6,25 @@
 
 #include <llapi/ScheduleAPI.h>
 
+/**
+ * @brief The tick per second
+ * @note The tps data here might be over 20
+ */
 int tick_per_second;
+/**
+ * @brief The legal tick per second
+ * @note The tps data here will not be over 20
+ */
 int legal_tick_per_second;
 //double ms_per_tick;
+/**
+ * @brief The ticks
+ * @attention This variable should never be used outside this file (tps.cpp)
+ */
 int ticks = 0;
+/**
+ * @brief The total ticks
+ */
 size_t total_ticks = 0;
 
 void initTPS() {
