@@ -10,10 +10,12 @@ int tick_per_second;
 int legal_tick_per_second;
 //double ms_per_tick;
 int ticks = 0;
+size_t total_ticks = 0;
 
 void initTPS() {
     Schedule::repeat([]() {
         ticks++;
+        total_ticks++;
     },1);
     std::thread([]{
         for (;;){

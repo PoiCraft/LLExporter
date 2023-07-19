@@ -15,6 +15,7 @@ extern Logger logger;
 extern EventCounter eventCounter;
 extern int tick_per_second;
 extern int legal_tick_per_second;
+extern size_t total_ticks;
 extern size_t up_time;
 //extern double ms_per_tick;
 
@@ -59,6 +60,7 @@ void loadLLPLayerInfoApi(MetricsManager &mm) {
 }
 
 void loadTPS(MetricsManager &mm) {
+    mm.newMetrics("total_ticks", total_ticks);
     mm.newMetrics("tps", tick_per_second);
     mm.newMetrics("legal_tps", legal_tick_per_second);
     //mm.newMetrics("mspt", ms_per_tick);
